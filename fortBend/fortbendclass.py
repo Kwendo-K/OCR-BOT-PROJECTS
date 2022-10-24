@@ -16,13 +16,13 @@ stored_data = {'Toll Agency':'Fort Bend County Toll Road Authority',
                 'Amount Due':None,
                 'Due Date':None,
                 'Pin #':None,
-                'Notice Date':None,
+                # 'Notice Date':None,
                 'Notice #':None,
                 'Total Amount Due':None
             }
 df = pd.DataFrame()
 #importing the pdf to extract data from
-with pdfplumber.open("./scan_164mt_amazon_fbctra_(6)_sept_16_(nko).pdf") as pdf:
+with pdfplumber.open("./scn_109_(p2)_fort_bend_county_-amazon_(6)_july_2_(bm).pdf") as pdf:
     for x, text in enumerate(pdf.pages):
         page = pdf.pages[x]
         page_content = page.extract_text()
@@ -36,49 +36,31 @@ with pdfplumber.open("./scan_164mt_amazon_fbctra_(6)_sept_16_(nko).pdf") as pdf:
         total_due = re.findall(r'Total\W\Due\W(\W\d*\W\d*...)', page_content)
         
         # # all_table variable stores the specific needed data captured from page_content variable
-        all_table = re.findall(r'S\d*..\W\d*.\w*\W\d*.\w*.\w*.\D*\d.\w*.\D*\d*\W\d*\W\d*\W\d*\W\d*\W\d*\W\d*\s\W\d\W\d*', page_content)
+        all_table = re.findall(r'(.*[-]\d{5})\D+\w+\W+(\w{7})\W+(\w{2})\W+(\w+\W+\D+\w+)\W+(\S+\W+\d+\D+\d+\D+\d+)\W+(\d+\D+\d+)|(\w{13}\D+\d{5})\D+\w+\W+(\w{7})\W+(\w{2})\W+(\S+\D+\d+)\D+(\S+\W+\d+\D+\d+\D+\d+)\W+(\d+\D+\d+)', page_content)
         due_date = re.findall(r'Date\WDue\W\W(\d*\W\d*\W\d*)', page_content)
         
-        if len(all_table) > 0:
-            for i in all_table:
-                print(i)
-                license_plate = re.findall(r'S\d*\W*\d*\W\D\w*\W(\d*)\W\w*\W\w*\W*\D*\d*\W\d*\W\d*\W\d*\W\d*\W\d*\W\d*\W\W\d*\W\d*|S\d*..\W\d*.(\w*\W\d*.\w*).\w*.\D*\d.\w*.\D*\d*\W\d*\W\d*\W\d*\W\d*\W\d*\W\d*\s\W\d\W\d*', i)
-                state = re.findall(r'S\d*..\W\d*.(.\w*)\W\d*.\w*.\w*.\D*\d.\w*.\D*\d*\W\d*\W\d*\W\d*\W\d*\W\d*\W\d*\s\W\d\W\d*', i)
-                trxn_date_time = re.findall(r'S\d*\W\d*.\w*\W\d*.\w*.\w*.\D*\d.\w*.\D*\d*\W(\d*\W\d*\W\d*\W\d*\W\d*\W\d*)\s\W\d\W\d*', i)
-                exit_lane = re.findall(r'S\d*\W*\d*\W\D\w*\W\d*\W(\w*\W\w*\W*\D*\d*)\W\d*\W\d*\W\d*\W\d*\W\d*\W\d*\W\W\d*\W\d*|S\d*..\W\d*.\w*\W\d*.\w*.(\w*.\D*\d.\w*.\D*\d*)\W\d*\W\d*\W\d*\W\d*\W\d*\W\d*\s\W\d\W\d*', i)
-                violation = re.findall(r'(S\d*..\W\d*).\w*\W\d*.\w*.\w*.\D*\d.\w*.\D*\d*\W\d*\W\d*\W\d*\W\d*\W\d*\W\d*\s\W\d\W\d*', i)
-                amount_due = re.findall(r'S\d*\W\d*.\w*\W\d*.\w*.\w*.\D*\d.\w*.\D*\d*\W\d*\W\d*\W\d*\W\d*\W\d*\W\d*\s(\W\d\W\d*)', i)
+        if len(all_table) >= 1:
+            for a_l in all_table:
+                al = list(filter(None, a_l))
+                # print(al)
+                violation = al[0]
+                lp = al[1]
+                state = al[2]
+                exit_lane = al[3]
+                trxn_date = al[4]
+                amount = al[5]
+                # print(amount)
                 
-                
-                # print('due date', due_date)
-                for l_plate in license_plate:
-                    l_p = list(filter(None, l_plate))
-                    lp = ''.join(l_p)
-                    # print(lp)
-                    stored_data['Lp'] = lp
-                for st in state:
-                    # print(st)
-                    stored_data['Lp State'] = st
-                for trxn in trxn_date_time:
-                    # print(trxn)
-                    stored_data['Trxn date & time'] = trxn
-                for e_lane in exit_lane:
-                    e_l = list(filter(None, e_lane))
-                    el = ''.join(e_l)
-                    # print(el)
-                    stored_data['Exit lane/Location'] = el
-                for v in violation:
-                    # print(inv)
-                    stored_data['Violation #'] = v
-                for amt in amount_due:
-                    # print(amt)
-                    stored_data['Amount Due'] = amt
-                for dd in due_date:
-                    print(dd)
-                    stored_data['Due Date'] = dd
+                stored_data['Lp'] = lp
+                stored_data['Lp State'] = state
+                stored_data['Exit lane/Location'] = exit_lane
+                stored_data['Violation #'] = violation
+                stored_data['Trxn date & time'] = trxn_date
+                stored_data['Amount Due'] = amount
 
                 df = df.append(stored_data, ignore_index=True)
                 df.drop_duplicates(inplace = True)
+                print(df)
         if len(all_table) <= 0:
             #This else statement executes when no table is found on a page
             date_due = re.findall(r'Date Due\W+(\d+\D+\d+\D+\d+)', page_content)
@@ -106,4 +88,4 @@ with pdfplumber.open("./scan_164mt_amazon_fbctra_(6)_sept_16_(nko).pdf") as pdf:
             df = df.append(stored_data, ignore_index=True)
             df.drop_duplicates(inplace = True)
             print(df)
-df.to_excel('fortbend164.xlsx', index=False)
+df.to_excel('fortbend109.xlsx', index=False)

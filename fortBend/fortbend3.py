@@ -22,14 +22,14 @@ stored_data = {'Toll Agency':'Fort Bend County Toll Road Authority',
             }
 df = pd.DataFrame()
 #importing the pdf to extract data from
-with pdfplumber.open("./scan_275mt_amazon__fbctra_(12)_oct_14_(jm).pdf") as pdf:
+with pdfplumber.open("./scan_281lm_amazon_fbctra_(9)__september_19_(ag).pdf") as pdf:
     for x, text in enumerate(pdf.pages):
         page = pdf.pages[x]
         page_content = page.extract_text()
         # print(page_content)
         
         # all_table variable stores the specific needed data captured from page_content variable
-        # all_table = re.findall(r'(\w{13}\D*\w{5})\s*(\w{2})\-(\w{6}.)\s*(\w*\W*\w*\W*\D*\d*)\W*(\d*\W*\d*\W*\d*\W*\d*\W*\d*\W*\d*)\s*(\W*\d*\W*\d*)', page_content)
+        all_table = re.findall(r'(\w{13}\D*\w{5})\s*(\w{2})\-(\w{6}.)\s*(\w*\W*\w*\W*\D*\d*)\W*(\d*\W*\d*\W*\d*\W*\d*\W*\d*\W*\d*)\s*(\W*\d*\W*\d*)', page_content)
         date_due = re.findall(r'Date Due\W+(\d*\W+\d*\W+\d*)', page_content)
         notice_no = re.findall(r'Notice Number\W+(\w{13})', page_content)
         license_plate = re.findall(r'License Plate\W+(\w{7})', page_content)
@@ -77,4 +77,4 @@ with pdfplumber.open("./scan_275mt_amazon__fbctra_(12)_oct_14_(jm).pdf") as pdf:
                 stored_data['Exit lane/Location'] = ''
                 df = df.append(stored_data, ignore_index=True)
         print(df)
-df.to_excel('Fbctra275.xlsx', index=False)
+df.to_excel('Fbctra281.xlsx', index=False)

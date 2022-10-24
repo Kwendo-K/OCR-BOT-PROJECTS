@@ -23,7 +23,7 @@ stored_data = {
 df = pd.DataFrame()
 
 #opening the pdf to extract data from
-with pdfplumber.open('./angie/scan_102mt_amazon__pay_by_plate_ma_(46)_oct_6_(jm).pdf') as pdf:
+with pdfplumber.open('./angie/scan_380mt_amazon_pay_by_plate_ma_(38)_oct_20_(nko).pdf') as pdf:
     #creating a loop to loop through the entire pdf opened
     for x, text in enumerate(pdf.pages):
         print(f"Page {x}")
@@ -53,7 +53,8 @@ with pdfplumber.open('./angie/scan_102mt_amazon__pay_by_plate_ma_(46)_oct_6_(jm)
             prev_b = prev_bal[0]
             due_date = prev_bal[5]
         for f_fee in invoice_fee:
-            fee = f_fee
+            ff = f_fee.replace('^', '')
+            fee = float(ff)
         
         
         final_trans_index = len(all_data) - 1
@@ -71,7 +72,7 @@ with pdfplumber.open('./angie/scan_102mt_amazon__pay_by_plate_ma_(46)_oct_6_(jm)
             stored_data['TRXN DATE & TIME'] = trxn_date_time
             stored_data['EXIT LANE/LOCATION'] = exit_lane
             stored_data['REFERENCE # OR INVOICE #'] = inv
-            final_amt_due = float(amt_due) if trans_index != final_trans_index else float(amt_due) + float(fee) + extra_fee
+            final_amt_due = float(amt_due)if trans_index != final_trans_index else float(amt_due) + fee + extra_fee
             stored_data['AMOUNT DUE'] = final_amt_due
             if due_date.isdigit():
                 stored_data['DUE DATE'] = due_date
@@ -96,4 +97,4 @@ with pdfplumber.open('./angie/scan_102mt_amazon__pay_by_plate_ma_(46)_oct_6_(jm)
             stored_data['DUE DATE'] = ""
             df = df.append(stored_data, ignore_index = True)
         print(df)
-df.to_excel('paybyplate102.xlsx', index=False)
+df.to_excel('paybyplate380.xlsx', index=False)

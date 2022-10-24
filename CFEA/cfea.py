@@ -21,14 +21,14 @@ stored_data = {
     'DUE DATE':None,
 }
 
-with pdfplumber.open('./scan_254mt_amazon__cfea_(11)_oct_14_(jm).pdf') as pdf:
+with pdfplumber.open('./scn_176_cfea(pay_by_plate)-amazon_(3)_october_20_(bm).pdf') as pdf:
     for i, text in enumerate(pdf.pages):
         pages = pdf.pages[i]
         page_data = pages.extract_text()
-        print(page_data)
+        # print(page_data)
 
         exit_trxn_amt = re.findall(r'(.*\D[()]|.*\D[()]\W+\S+)\W+(\d+\W+\d+\W+\d+\W+\d+\W+\d+\W+\d{2}\W+\wM)\W+(\d+\W+\d{2})|(.*\D[()]\W+\S+)\W+(\d+\W+\d+\W+\d+\W+\d+\W+\d+\W+\d{2}\W+\wM).*[$](\d+\W+\d{2})', page_data)
-        inv_lp_st_dte_total = re.findall(r'(\w{8})\W+(\w{7})\W+(\w{2})\W+(\d+\W+\d+\W+\d+)\W+(\d+\W+\d+\W+\d+)\W+(\d+\W+\d+)', page_data)
+        inv_lp_st_dte_total = re.findall(r'(\w{8})\W+(\w{7})\W+(\w{2})\W+(\d+\W+\d+\W+\d+)\W+(\d+\W+\d+\W+\d+)\W+(\d+\W+\d+)|(\w{8})\W+(\w{7})(\w{2})\W+(\d+\W+\d+\W+\d+)\W+(\d+\W+\d+\W+\d+)\W+(\d+\W+\d+)', page_data)
         
         for i_v in inv_lp_st_dte_total:
             iv = list(filter(None, i_v))
@@ -45,7 +45,7 @@ with pdfplumber.open('./scan_254mt_amazon__cfea_(11)_oct_14_(jm).pdf') as pdf:
                 stored_data['TRXN DATE & TIME'] = ''
                 stored_data['EXIT LANE/LOCATION'] = ''
                 stored_data['REFERENCE # OR INVOICE #'] = invoice
-                stored_data['DUE DATE'] = due_date
+                stored_data['DUE DATE'] = due_date.upper()
                 stored_data['AMOUNT DUE'] = total_amount
 
                 df = df.append(stored_data, ignore_index=True)
@@ -66,4 +66,4 @@ with pdfplumber.open('./scan_254mt_amazon__cfea_(11)_oct_14_(jm).pdf') as pdf:
                 stored_data['AMOUNT DUE'] = amount
                 df = df.append(stored_data, ignore_index=True)
         print(df)
-df.to_excel('CFEA254.xlsx', index=False)
+df.to_excel('CFEA176.xlsx', index=False)

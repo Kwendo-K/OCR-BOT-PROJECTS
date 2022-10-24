@@ -22,7 +22,7 @@ stored_data = {
 }
 output_list = []
 
-with pdfplumber.open('./scan_437lm_amazon__mta_tolls_by_mail_(ny)_(14)__august_30.pdf') as pdf:
+with pdfplumber.open('./scan_506mt_amazon-mta_(tolls_by_mail)_(7)_oct_23_(nko).pdf') as pdf:
     for i, text in enumerate(pdf.pages):
         pages = pdf.pages[i]
         page_data = pages.extract_text()
@@ -35,7 +35,6 @@ with pdfplumber.open('./scan_437lm_amazon__mta_tolls_by_mail_(ny)_(14)__august_3
 
         for d_d in due_date:
             dd = d_d
-            print(dd)
         for i_nv in invoice:
             inv = i_nv
         for al in all_table:
@@ -60,4 +59,4 @@ with pdfplumber.open('./scan_437lm_amazon__mta_tolls_by_mail_(ny)_(14)__august_3
             # df = pd.concat([df, pd.DataFrame([output_list])])
             df = df.append(stored_data, ignore_index=True)
         print(df)
-df.to_excel('tollsbymail437.xlsx', index=False)
+df.to_excel('tollsbymail506.xlsx', index=False)

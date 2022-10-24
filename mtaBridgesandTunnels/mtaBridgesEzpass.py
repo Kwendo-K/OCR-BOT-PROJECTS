@@ -8,7 +8,7 @@ import pdfplumber
 
 df = pd.DataFrame()
 stored_data = {
-    'TOLL AGENCY':'MTA BRIDGES AND TUNNELS',
+    'TOLL AGENCY':'MTA BRIGES AND TUNNELS',
     'LP':None,
     'LP STATE':None,
     'TRXN DATE & TIME':None,
@@ -27,11 +27,16 @@ with pdfplumber.open('./scan_294mt_amazon_mta_(bridges__tunnels)_(29)_oct_17_(nk
         page_data = pages.extract_text()
         # print(page_data)
         
-        all_table = re.findall(r'(\w{13}\D+\w{5})\s+\w+\s+(\w{2})\s+(\w+)\s+(\w+|\D*\s+\d+)\s+(\d{2}\W+\d{2}\W+\d+\s+\d{2}\W+\d{2}\W+\d{2})\W+\S+\W+\S+\W+(\S+)|(\w{13}\W+\d{5})\W+(\w{2})\W+(\d{7})\W+(\S+\W+\w+)\W+(\d{2}\W+\d{2}\W+\d+\W+\d{2}\W+\d{2}\W+\d{2})\W+\d+\W+\d+\W+\d+\W+\d+\W+\d+\W+\d+\W+(\d+\W+\d{2})\n', page_data)
-        due_date = re.findall(r'Due by\s+(\d{2}\W+\d{2}\W+\d{4})|Due is required\s+(\w+)', page_data)
+        # all_table = re.findall(r'(\w{13}\D+\w{5})\s+\w+\s+(\w{2})\s+(\w+)\s+(\w+|\D*\s+\d+)\s+(\d{2}\W+\d{2}\W+\d+\s+\d{2}\W+\d{2}\W+\d{2})\W+\S+\W+\S+\D+(\d+\D+\d+)', page_data)
+        # all_table = re.findall(r'(\w{13}\W+\w{5})\W+\S+\W+(\w{2})(\w{7})\W+(\S+\W+\S+)\W+(\S+\W+\d+\D+\d+\D+\d+)\W+\S+\W+\S+\W+(\d+\D+\d+)|(\w{13}\W+\w{5})\W+\S+\W+(\w{2})\W+(\S+)\W+(\S+\W+\S+)\W+(\S+\W+\d+\W+\d+\W+\d+)\W+\S+\W+\S+\W+(\d+\W+\d+)|(\w{13}\D+\w{5})\s+\w+\s+(\w{2})\s+(\w+)\s+(\w+|\D*\s+\d+)\s+(\d{2}\W+\d{2}\W+\d+\s+\d{2}\W+\d{2}\W+\d{2})\W+\S+\W+\S+\D+(\d+\D+\d+)', page_data)
+        all_table = re.findall(r'(\w{13}\W+\w{5})\W+\S+\W+(\w{2})(\w{7})\W+(\S+\W+\S+)\W+(\S+\W+\d+\D+\d+\D+\d+)\D+\S+\D+\S+\D+(\d+\D+\d+)|(\w{13}\W+\w{5})\W+\S+\W+(\w{2})\W+(\S+)\W+(\S+\W+\S+)\W+(\S+\W+\d+\W+\d+\W+\d+)\W+\S+\W+\S+\W+(\d+\W+\d+)', page_data)
+        # due_date = re.findall(r'Due by\s+(\d{2}\W+\d{2}\W+\d{4})|Due is required\s+(\w+)', page_data)
+        due_date = re.findall(r'Due by\s+(\d{2}\W+\d{2}\W+\d{4})|Due by(\d+\D+\d+\D+\d+)|Due is required\s+(\w+)|Dueisrequired(\w+)', page_data)
         for d in due_date:
-            dd = list(d)
+            dd = list(filter(None, d))
+            print(dd)
             d_due = ''.join(dd)
+            # print(d_due)
         for al in all_table:
             # print(al)
 
@@ -58,8 +63,8 @@ with pdfplumber.open('./scan_294mt_amazon_mta_(bridges__tunnels)_(29)_oct_17_(nk
                 due_d = d_due.upper()
                 stored_data['DUE DATE'] = due_d
             stored_data['PIN #'] = ''
-            print(stored_data)
+            # print(stored_data)
 
             df = df.append(stored_data, ignore_index = True)
         print(df)
-    df.to_excel('scan294.xlsx', index=False)
+df.to_excel('scan294.xlsx', index=False)

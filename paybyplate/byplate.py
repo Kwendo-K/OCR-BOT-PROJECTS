@@ -23,7 +23,7 @@ stored_data = {
 df = pd.DataFrame()
 
 #opening the pdf to extract data from
-with pdfplumber.open('./angie/scan_249mt_amazon__pay_by_plate_ma_(37)_oct_14_(jm).pdf') as pdf:
+with pdfplumber.open('./angie/scan_380mt_amazon_pay_by_plate_ma_(38)_oct_20_(nko).pdf') as pdf:
     #creating a loop to loop through the entire pdf opened
     for x, text in enumerate(pdf.pages):
         print(f"Page {x}")
@@ -50,10 +50,13 @@ with pdfplumber.open('./angie/scan_249mt_amazon__pay_by_plate_ma_(37)_oct_14_(jm
         for inv in invoice_number:
             pass
         for prev_bal in prev_balance:
-            prev_b = prev_bal[0]
+            prev_bl = prev_bal[0]
+            prev_b = float(prev_bl)
             due_date = prev_bal[5]
+            
         for f_fee in invoice_fee:
-            fee = f_fee
+            ff = f_fee.replace('^', '')
+            fee = float(ff)
         
         
         final_trans_index = len(all_data) - 1
@@ -86,14 +89,17 @@ with pdfplumber.open('./angie/scan_249mt_amazon__pay_by_plate_ma_(37)_oct_14_(jm
             df.drop_duplicates(inplace = True)
             trans_index += 1
 
-        if len(prev_balance) > 0:
+        # if len(prev_balance) > 0:
             
-            stored_data['LP'] = ""
-            stored_data['TRXN DATE & TIME'] = ""
-            stored_data['EXIT LANE/LOCATION'] = ""
-            stored_data['REFERENCE # OR INVOICE #'] = ""
-            stored_data['AMOUNT DUE'] = prev_b
-            stored_data['DUE DATE'] = ""
-            df = df.append(stored_data, ignore_index = True)
+        #     # stored_data['LP'] = license_plate
+        #     stored_data['TRXN DATE & TIME'] = ""
+        #     stored_data['EXIT LANE/LOCATION'] = ""
+        #     stored_data['REFERENCE # OR INVOICE #'] = ""
+        #     if prev_b <= 0:
+        #         pass
+        #     else:
+        #         stored_data['AMOUNT DUE'] = prev_b
+        #     stored_data['DUE DATE'] = ""
+        #     df = df.append(stored_data, ignore_index = True)
         print(df)
-df.to_excel('paybyplate249.xlsx', index=False)
+df.to_excel('paybyplate380.xlsx', index=False)
